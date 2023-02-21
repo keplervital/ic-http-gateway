@@ -4,6 +4,7 @@ import { Packet, default as dns2 } from "dns2";
 // Set's the fallback servers for nodejs to use
 const listenAddress = "127.0.0.1";
 const fallbackDns = "8.8.8.8";
+
 const fallbackServers = Array.from(
   new Set([
     ...dns
@@ -35,7 +36,6 @@ const server = dns2.createServer({
     const { name, type } = question as DnsQuestion;
     const isIcDomain = icDomains.has(name);
     const hasType = queryType[type] !== undefined;
-    console.log(type, queryType[type]);
     if (!hasType) {
       send(response);
       return;
@@ -86,7 +86,7 @@ const server = dns2.createServer({
 });
 
 server.on("request", (request, _response, _rinfo) => {
-  console.log(request.header.id, request.questions[0]);
+  console.log(`query ${request.header.id}:`, request.questions[0]);
 });
 
 server.on("requestError", (error) => {
@@ -101,7 +101,7 @@ server.on("listening", () => {
   }
 
   console.info(
-    `DNS server started listening on udp://${udp.address}:${udp.port}`
+    `\nDNS server started listening on udp://${udp.address}:${udp.port}`
   );
 });
 
